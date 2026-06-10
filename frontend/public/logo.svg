@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 48" fill="none">
+  <defs>
+    <linearGradient id="g" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6366f1"/>
+      <stop offset="0.5" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <path d="M24 3L8 10v12c0 10.2 6.8 19.7 16 22 9.2-2.3 16-11.8 16-22V10L24 3z" fill="url(#g)"/>
+  <circle cx="24" cy="22" r="9" stroke="white" stroke-width="2" fill="none"/>
+  <circle cx="24" cy="22" r="4.5" fill="white"/>
+  <path d="M20 22l2.5 2.5L28 19" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="56" y="30" font-family="system-ui, sans-serif" font-size="22" font-weight="700" fill="#0f172a">Invigilo</text>
+</svg>
