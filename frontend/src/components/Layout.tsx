@@ -45,11 +45,12 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <>
-      <div className="p-5 border-b border-white/10">
+      <div className="px-5 py-6 border-b border-white/10">
         <Logo size="sm" theme="light" />
       </div>
 
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+        <p className="px-3 mb-3 text-[10px] uppercase tracking-[0.18em] text-white/40">Workspace</p>
         {items.map(({ to, label, icon: Icon }) => {
           const active = location.pathname === to;
           return (
@@ -57,8 +58,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               key={to}
               to={to}
               onClick={onNavigate}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-                active ? 'bg-brand-600 text-white shadow-brand' : 'text-indigo-200/80 hover:bg-white/5 hover:text-white'
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                active ? 'bg-white text-brand-950' : 'text-white/65 hover:bg-white/[0.06] hover:text-white'
               }`}
             >
               <Icon className="w-[18px] h-[18px]" />
@@ -69,8 +70,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         <Link
           to="/settings"
           onClick={onNavigate}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-            location.pathname === '/settings' ? 'bg-brand-600 text-white shadow-brand' : 'text-indigo-200/80 hover:bg-white/5 hover:text-white'
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+            location.pathname === '/settings' ? 'bg-white text-brand-950' : 'text-white/65 hover:bg-white/[0.06] hover:text-white'
           }`}
         >
           <Settings className="w-[18px] h-[18px]" />
@@ -79,18 +80,18 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       <div className="p-3 border-t border-white/10">
-        <div className="flex items-center gap-3 px-3 py-2.5 mb-1 rounded-xl bg-white/5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-xs font-bold">
+        <div className="flex items-center gap-3 px-3 py-2.5 mb-1">
+          <div className="w-8 h-8 rounded-full border border-[#b69358]/60 bg-white/5 flex items-center justify-center text-xs font-semibold text-[#e1c995]">
             {user?.fullName?.charAt(0) || 'U'}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{user?.fullName}</p>
-            <p className="text-[11px] text-indigo-300/70 capitalize">{user?.role}</p>
+            <p className="text-[11px] text-white/45 capitalize">{user?.role}</p>
           </div>
         </div>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-indigo-200/80 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+          className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-white/55 hover:text-white hover:bg-white/[0.06] rounded-md transition-colors"
         >
           <LogOut className="w-[18px] h-[18px]" />
           Sign out
@@ -104,8 +105,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
-      <aside className="hidden lg:flex w-64 bg-brand-950 text-white flex-col border-r border-white/5 fixed h-full z-30">
+    <div className="min-h-screen flex bg-[#f4f3ef]">
+      <aside className="hidden lg:flex w-64 bg-brand-950 text-white flex-col fixed h-full z-30">
         <SidebarContent />
       </aside>
 
@@ -113,7 +114,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
           <aside className="relative w-72 bg-brand-950 text-white flex flex-col h-full animate-slide-in-left">
-            <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 p-2 text-indigo-200">
+            <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 p-2 text-white/60">
               <X className="w-5 h-5" />
             </button>
             <SidebarContent onNavigate={() => setMobileOpen(false)} />
@@ -122,13 +123,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       )}
 
       <div className="flex-1 lg:ml-64">
-        <header className="lg:hidden sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex items-center justify-between">
+        <header className="lg:hidden sticky top-0 z-20 bg-[#f4f3ef]/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex items-center justify-between">
           <Logo size="sm" />
           <button onClick={() => setMobileOpen(true)} className="p-2 rounded-lg hover:bg-slate-100">
             <Menu className="w-5 h-5" />
           </button>
         </header>
-        <main className="p-4 sm:p-8">{children}</main>
+        <main className="p-4 sm:p-8 xl:p-10 max-w-[1440px] mx-auto">{children}</main>
       </div>
     </div>
   );

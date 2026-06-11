@@ -73,7 +73,7 @@ export default function Settings() {
 
       <div className="card mb-6">
         <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-2xl font-bold text-white">
+          <div className="w-16 h-16 rounded-full bg-brand-950 border-2 border-[#b69358] flex items-center justify-center text-2xl font-display font-semibold text-[#f7f3e9]">
             {user?.fullName?.charAt(0)}
           </div>
           <div>
@@ -141,7 +141,7 @@ export default function Settings() {
               onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
             />
           </FormField>
-          <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 rounded-xl p-3">
+          <div className="flex items-center gap-2 text-xs text-slate-600 bg-[#f4f3ef] border border-slate-200 rounded-md p-3">
             <Shield className="w-4 h-4 text-brand-500" />
             Changing your password will sign you out of all other sessions.
           </div>

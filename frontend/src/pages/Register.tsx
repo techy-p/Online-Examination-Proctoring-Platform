@@ -34,25 +34,25 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-2/5 brand-panel items-center justify-center p-12 relative">
+      <div className="hidden lg:flex lg:w-[44%] brand-panel items-center justify-center p-12 relative">
         <div className="absolute inset-0 brand-grid-pattern" />
         <div className="relative z-10 text-center">
           <div className="flex flex-col items-center gap-4">
             <Logo size="xl" variant="icon" />
             <Logo size="lg" variant="wordmark" theme="light" />
           </div>
-          <p className="text-indigo-200 mt-8 max-w-xs mx-auto text-sm leading-relaxed">
-            Create your student account and start taking secure, proctored examinations.
+          <p className="text-white/60 mt-8 max-w-xs mx-auto text-sm leading-relaxed">
+            Register as a student to access assigned assessments and your examination record.
           </p>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-8 bg-slate-50">
+      <div className="flex-1 flex items-center justify-center p-8 bg-[#f4f3ef]">
         <div className="w-full max-w-md">
           <div className="lg:hidden mb-8"><Logo size="md" /></div>
 
-          <div className="card shadow-brand/10">
-            <h1 className="font-display text-2xl font-bold mb-1">Create your account</h1>
+          <div className="card">
+            <h1 className="font-display text-3xl font-semibold tracking-tight mb-1 text-brand-950">Create your account</h1>
             <p className="text-slate-500 text-sm mb-6">Student registration for {BRAND.name}</p>
 
             {formError && !Object.keys(errors).length && (

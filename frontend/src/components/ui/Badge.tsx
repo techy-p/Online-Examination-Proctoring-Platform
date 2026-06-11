@@ -21,7 +21,7 @@ export default function Badge({
   className?: string;
 }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${variants[variant]} ${className}`}>
+    <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[11px] font-semibold uppercase tracking-[0.06em] ${variants[variant]} ${className}`}>
       {dot && <span className={`w-1.5 h-1.5 rounded-full ${variant === 'success' ? 'bg-emerald-500' : variant === 'danger' ? 'bg-red-500 animate-pulse' : 'bg-current'}`} />}
       {children}
     </span>

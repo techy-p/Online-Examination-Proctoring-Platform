@@ -1,17 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Shield, Zap, BarChart3, Video, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, ArrowUpRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/brand/Logo';
 import { BRAND } from '../config/brand';
 import FormField from '../components/ui/FormField';
-
-const features = [
-  { icon: Video, title: 'Live Proctoring', desc: 'WebRTC-powered webcam monitoring' },
-  { icon: Zap, title: 'Instant Grading', desc: 'Automated evaluation on submit' },
-  { icon: Shield, title: 'Integrity Guard', desc: 'Tab-switch & anomaly detection' },
-  { icon: BarChart3, title: 'Deep Analytics', desc: 'Performance & violation insights' },
-];
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -41,45 +34,44 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-[52%] brand-panel text-white p-12 flex-col justify-between relative">
+    <div className="min-h-screen grid lg:grid-cols-[1.08fr_0.92fr] bg-[#f4f3ef]">
+      <section className="hidden lg:flex brand-panel text-white p-12 xl:p-16 flex-col justify-between relative">
         <div className="absolute inset-0 brand-grid-pattern" />
-        <div className="relative z-10"><Logo size="lg" theme="light" /></div>
+        <Logo size="lg" theme="light" className="relative z-10" />
 
-        <div className="relative z-10 max-w-lg">
-          <p className="text-indigo-200 text-sm font-medium tracking-widest uppercase mb-4">Examination Platform</p>
-          <h2 className="font-display text-4xl xl:text-5xl font-bold leading-tight mb-5">
-            Secure assessments.<br /><span className="text-cyan-300">Zero compromise.</span>
+        <div className="relative z-10 max-w-2xl">
+          <p className="text-[#e1c995] text-xs font-semibold tracking-[0.2em] uppercase mb-6">Examination operations</p>
+          <h2 className="font-display text-5xl xl:text-6xl font-medium tracking-[-0.04em] leading-[1.05] text-[#f7f3e9]">
+            Assessment integrity,<br />handled with care.
           </h2>
-          <p className="text-indigo-100/90 text-lg leading-relaxed">{BRAND.description}</p>
-          <div className="mt-10 grid grid-cols-2 gap-3">
-            {features.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/15 transition-colors">
-                <Icon className="w-5 h-5 text-cyan-300 mb-2" />
-                <p className="font-semibold text-sm">{title}</p>
-                <p className="text-indigo-200/80 text-xs mt-0.5">{desc}</p>
+          <p className="text-white/65 text-base leading-relaxed mt-7 max-w-xl">
+            One workspace for question banks, timed examinations, candidate monitoring, evaluation, and reporting.
+          </p>
+          <div className="grid grid-cols-3 mt-12 border-y border-white/15 py-6">
+            {[['04', 'Defined roles'], ['03', 'Question formats'], ['Live', 'Integrity signals']].map(([value, label]) => (
+              <div key={label} className="border-r border-white/15 last:border-0 px-5 first:pl-0">
+                <p className="font-display text-2xl text-[#f7f3e9]">{value}</p>
+                <p className="text-[11px] uppercase tracking-[0.12em] text-white/45 mt-1">{label}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center justify-between text-sm text-indigo-200/70">
-          <span>Built by {BRAND.author}</span>
-          <span className="font-mono text-xs bg-white/10 px-2 py-1 rounded">{BRAND.domain}</span>
+        <div className="relative z-10 flex items-center justify-between text-xs text-white/45">
+          <span>Built for accountable assessment</span>
+          <span>{BRAND.domain}</span>
         </div>
-      </div>
+      </section>
 
-      <div className="flex-1 flex items-center justify-center p-8 bg-slate-50">
-        <div className="w-full max-w-md">
-          <div className="lg:hidden mb-10"><Logo size="md" /></div>
-
-          <div className="mb-8">
-            <h1 className="font-display text-2xl font-bold text-slate-900">Welcome back</h1>
-            <p className="text-slate-500 mt-1.5">Sign in to your {BRAND.name} workspace</p>
-          </div>
+      <section className="min-w-0 overflow-hidden flex items-center justify-center px-6 py-12 sm:px-12">
+        <div className="w-full min-w-0 max-w-[calc(100vw-3rem)] sm:max-w-[420px]">
+          <div className="lg:hidden mb-12"><Logo size="md" /></div>
+          <p className="text-xs uppercase tracking-[0.16em] font-semibold text-brand-700 mb-4">Secure access</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-[-0.035em] text-brand-950">Sign in to your workspace</h1>
+          <p className="text-slate-600 mt-3 mb-9">Use your assigned account to continue.</p>
 
           {formError && !Object.keys(errors).length && (
-            <div className="bg-red-50 border border-red-100 text-red-700 px-4 py-3 rounded-xl mb-5 text-sm">{formError}</div>
+            <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-5 text-sm">{formError}</div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -89,36 +81,29 @@ export default function Login() {
             <FormField label="Password" error={errors.password}>
               <div className="relative">
                 <input type={showPassword ? 'text' : 'password'} className="input pr-11" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" />
-                <button type="button" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" onClick={() => setShowPassword(!showPassword)}>
+                <button type="button" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700" onClick={() => setShowPassword(!showPassword)}>
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </FormField>
-            <button type="submit" className="btn-primary w-full py-3 text-sm flex items-center justify-center gap-2" disabled={loading}>
-              {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Signing in...</> : `Sign in to ${BRAND.name}`}
+            <button type="submit" className="btn-primary w-full py-3 flex items-center justify-center gap-2" disabled={loading}>
+              {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Signing in...</> : <>Continue <ArrowUpRight className="w-4 h-4" /></>}
             </button>
           </form>
 
-          <p className="text-center text-sm text-slate-500 mt-8">
-            Don&apos;t have an account?{' '}
-            <Link to="/register" className="text-brand-600 font-semibold hover:text-brand-700">Create one</Link>
+          <p className="text-sm text-slate-600 mt-7">
+            New student? <Link to="/register" className="text-brand-700 font-semibold hover:text-brand-950">Create an account</Link>
           </p>
 
-          <details className="mt-8 group">
-            <summary className="text-xs text-slate-400 cursor-pointer hover:text-slate-600 list-none text-center">
-              Show demo credentials
-            </summary>
-            <div className="mt-3 p-4 bg-white border border-slate-200 rounded-xl text-xs text-slate-500">
-              <p className="font-semibold text-slate-700 mb-2">Password: Password123!</p>
-              <div className="space-y-1 font-mono text-[11px]">
-                <p>admin@{BRAND.domain}</p>
-                <p>student@{BRAND.domain}</p>
-                <p>proctor@{BRAND.domain}</p>
-              </div>
+          <details className="mt-10 border-t border-slate-300 pt-5 group">
+            <summary className="text-xs uppercase tracking-[0.12em] font-semibold text-slate-500 cursor-pointer hover:text-slate-800 list-none">Demo access</summary>
+            <div className="mt-4 text-xs text-slate-600 leading-6">
+              <p>Password: <span className="font-mono text-slate-800">Password123!</span></p>
+              <p className="font-mono">admin@{BRAND.domain} / student@{BRAND.domain}</p>
             </div>
           </details>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

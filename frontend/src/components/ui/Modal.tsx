@@ -29,14 +29,14 @@ export default function Modal({ open, onClose, title, description, children, foo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
-      <div className={`relative w-full ${widths[size]} bg-white rounded-2xl shadow-2xl border border-slate-200 animate-scale-in`}>
+      <div className="absolute inset-0 bg-brand-950/70" onClick={onClose} />
+      <div className={`relative w-full ${widths[size]} bg-white rounded-lg shadow-2xl border border-slate-300 animate-scale-in`}>
         <div className="flex items-start justify-between p-6 pb-0">
           <div>
-            <h2 className="font-display text-lg font-bold text-slate-900">{title}</h2>
+            <h2 className="font-display text-xl font-semibold text-brand-950">{title}</h2>
             {description && <p className="text-sm text-slate-500 mt-1">{description}</p>}
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-700">
             <X className="w-5 h-5" />
           </button>
         </div>

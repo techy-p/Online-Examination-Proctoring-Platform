@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ClipboardList, Users, CheckCircle, TrendingUp, ArrowRight, Shield, BookOpen, Sparkles,
+  ClipboardList, Users, CheckCircle, TrendingUp, ArrowRight, Shield, BookOpen, BarChart3,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
@@ -86,31 +86,31 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
         {user?.role === 'student' && (
           <>
-            <Link to="/exams" className="card hover:shadow-md hover:border-brand-200/60 transition-all group">
-              <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center mb-4">
+            <Link to="/exams" className="card hover:border-brand-400 transition-colors group">
+              <div className="w-9 h-9 rounded-md bg-brand-50 text-brand-700 flex items-center justify-center mb-5">
                 <ClipboardList className="w-5 h-5" />
               </div>
               <h3 className="font-display font-semibold">Available Exams</h3>
               <p className="text-sm text-slate-500 mt-1">Take your scheduled examinations</p>
               <ArrowRight className="w-4 h-4 text-brand-600 mt-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <Link to="/results" className="card hover:shadow-md hover:border-emerald-200/60 transition-all group">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+            <Link to="/results" className="card hover:border-brand-400 transition-colors group">
+              <div className="w-9 h-9 rounded-md bg-brand-50 text-brand-700 flex items-center justify-center mb-5">
                 <TrendingUp className="w-5 h-5" />
               </div>
               <h3 className="font-display font-semibold">My Results</h3>
               <p className="text-sm text-slate-500 mt-1">View scores and performance history</p>
-              <ArrowRight className="w-4 h-4 text-emerald-600 mt-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-brand-700 mt-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </>
         )}
 
         {user?.role === 'proctor' && (
-          <Link to="/proctor" className="card md:col-span-2 hover:shadow-md hover:border-red-200/60 transition-all flex items-center gap-5 group">
-            <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center">
+          <Link to="/proctor" className="card md:col-span-2 hover:border-red-300 transition-colors flex items-center gap-5 group">
+            <div className="w-12 h-12 rounded-md bg-red-50 text-red-600 flex items-center justify-center">
               <Shield className="w-7 h-7" />
             </div>
             <div className="flex-1">
@@ -124,8 +124,8 @@ export default function Dashboard() {
 
         {['admin', 'instructor'].includes(user?.role || '') && (
           <>
-            <Link to="/exams" className="card hover:shadow-md transition-all flex items-center gap-4 group">
-              <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+            <Link to="/exams" className="card hover:border-brand-400 transition-colors flex items-center gap-4 group">
+              <div className="w-9 h-9 rounded-md bg-brand-50 text-brand-700 flex items-center justify-center">
                 <ClipboardList className="w-5 h-5" />
               </div>
               <div>
@@ -133,8 +133,8 @@ export default function Dashboard() {
                 <p className="text-sm text-slate-500">Create & publish</p>
               </div>
             </Link>
-            <Link to="/question-banks" className="card hover:shadow-md transition-all flex items-center gap-4 group">
-              <div className="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
+            <Link to="/question-banks" className="card hover:border-brand-400 transition-colors flex items-center gap-4 group">
+              <div className="w-9 h-9 rounded-md bg-brand-50 text-brand-700 flex items-center justify-center">
                 <BookOpen className="w-5 h-5" />
               </div>
               <div>
@@ -142,13 +142,13 @@ export default function Dashboard() {
                 <p className="text-sm text-slate-500">Build repositories</p>
               </div>
             </Link>
-            <Link to="/analytics" className="card hover:shadow-md transition-all flex items-center gap-4 group">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                <Sparkles className="w-5 h-5" />
+            <Link to="/analytics" className="card hover:border-brand-400 transition-colors flex items-center gap-4 group">
+              <div className="w-9 h-9 rounded-md bg-brand-50 text-brand-700 flex items-center justify-center">
+                <BarChart3 className="w-5 h-5" />
               </div>
               <div>
                 <h3 className="font-semibold">Analytics</h3>
-                <p className="text-sm text-slate-500">Insights & reports</p>
+                <p className="text-sm text-slate-500">Review reports</p>
               </div>
             </Link>
           </>

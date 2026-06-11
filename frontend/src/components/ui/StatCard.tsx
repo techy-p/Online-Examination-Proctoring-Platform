@@ -19,17 +19,17 @@ const colorMap = {
 export default function StatCard({ label, value, icon: Icon, trend, color = 'brand' }: StatCardProps) {
   const c = colorMap[color];
   return (
-    <div className="card group hover:shadow-md hover:border-brand-200/60 transition-all duration-300">
+    <div className="card group">
       <div className="flex items-start justify-between">
-        <div className={`p-2.5 rounded-xl ${c.light}`}>
+        <div className={`p-2 rounded-md ${c.light}`}>
           <Icon className="w-5 h-5" />
         </div>
         {trend && (
-          <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">{trend}</span>
+          <span className="text-xs font-medium text-emerald-700">{trend}</span>
         )}
       </div>
-      <p className="text-2xl font-bold text-slate-900 mt-4 font-display">{value}</p>
-      <p className="text-sm text-slate-500 mt-1">{label}</p>
+      <p className="text-3xl font-semibold text-brand-950 mt-5 font-display tracking-tight">{value}</p>
+      <p className="text-xs uppercase tracking-[0.12em] text-slate-500 mt-2">{label}</p>
     </div>
   );
 }

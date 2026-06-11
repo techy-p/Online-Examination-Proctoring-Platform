@@ -6,7 +6,7 @@ import {
 import api from '../api/client';
 import { Exam } from '../types';
 
-const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
+const COLORS = ['#326455', '#b69358', '#7b8f88', '#b4534b', '#66746f'];
 
 interface ExamAnalytics {
   overview: {
@@ -56,8 +56,8 @@ export default function Analytics() {
             { label: 'Avg Score', value: `${dashboard.averageScore}%` },
           ].map(({ label, value }) => (
             <div key={label} className="card text-center">
-              <p className="text-2xl font-bold text-primary-600">{value}</p>
-              <p className="text-sm text-slate-500 mt-1">{label}</p>
+              <p className="font-display text-3xl font-semibold text-brand-950">{value}</p>
+              <p className="text-xs uppercase tracking-[0.1em] text-slate-500 mt-2">{label}</p>
             </div>
           ))}
         </div>
@@ -106,7 +106,7 @@ export default function Analytics() {
                     <XAxis dataKey="range" fontSize={12} />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="count" fill="#326455" radius={[2, 2, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
