@@ -29,9 +29,11 @@ function evaluateAnswer(
 export async function evaluateSession(sessionId: string) {
   const answersResult = await query(
     `SELECT a.id, a.answer_text, q.question_type, q.correct_answer, q.points
-     FROM answers a
-     JOIN questions q ON q.id = a.question_id
-     WHERE a.session_id = $1`,
+     FROM exam_sessions es
+     JOIN exam_questions eq ON eq.exam_id = es.exam_id
+     JOIN questions q ON q.id = eq.question_id
+     LEFT JOIN answers a ON a.question_id = q.id AND a.session_id = es.id
+     WHERE es.id = $1`,
     [sessionId]
   );
 
@@ -44,10 +46,12 @@ export async function evaluateSession(sessionId: string) {
     const pointsAwarded = isCorrect ? Number(row.points) : 0;
     totalScore += pointsAwarded;
 
-    await query(
-      `UPDATE answers SET is_correct = $1, points_awarded = $2 WHERE id = $3`,
-      [isCorrect, pointsAwarded, row.id]
-    );
+    if (row.id) {
+      await query(
+        `UPDATE answers SET is_correct = $1, points_awarded = $2 WHERE id = $3`,
+        [isCorrect, pointsAwarded, row.id]
+      );
+    }
   }
 
   const examResult = await query(

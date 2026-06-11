@@ -1,136 +1,241 @@
-# Invigilo — Intelligent Exam Integrity
+# Invigilo - Online Examination and Proctoring Platform
 
-A production-grade online examination platform with WebRTC proctoring, automated evaluation, and real-time analytics.
+Invigilo is a full-stack examination platform for creating question banks, publishing timed exams, taking assessments, automatically grading submissions, reviewing results, and monitoring active students with browser-based proctoring signals.
 
-**Built by [Priyanshu Gupta](https://github.com/priyanshugupta)**
+The application includes four role-specific experiences:
 
-> *Invigilo* (Latin: *to watch over*) — enterprise exam integrity, reimagined.
+- **Admin:** platform-wide exam, analytics, and live-proctor access
+- **Instructor:** question-bank management, exam publishing, and analytics
+- **Student:** registration, timed exam attempts, autosaved answers, and results
+- **Proctor:** active-session monitoring through WebRTC
 
-## Tech Stack
+## Live Deployment
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Recharts |
-| Backend | Node.js, Express, TypeScript, Socket.io |
-| Database | PostgreSQL |
-| Real-time | WebRTC (peer-to-peer video) + Socket.io signaling |
-| Auth | JWT with role-based access control |
+- Frontend: [https://frontend-nine-self-83.vercel.app](https://frontend-nine-self-83.vercel.app)
+- REST API health: [https://backend-three-dun-35.vercel.app/api/health](https://backend-three-dun-35.vercel.app/api/health)
 
-## Auth & Security
-
-- JWT access tokens (15 min) + refresh token rotation (7 days)
-- Server-side password validation (uppercase, lowercase, number, 8+ chars)
-- Rate limiting on auth endpoints (15 attempts / 15 min)
-- Student-only self-registration (instructor/proctor roles assigned by admin)
-- Profile management & password change with session revocation
-- Automatic token refresh via Axios interceptors
+The live Vercel deployment uses the ephemeral PGlite demo fallback. Configure hosted PostgreSQL for persistent production data.
 
 ## Features
 
-- **Timed Exams & Question Banks** — Create question repositories with MCQ, True/False, and Short Answer types; build timed exams with configurable duration and passing marks
-- **Webcam Proctoring** — WebRTC-based live video monitoring with tab-switch detection, fullscreen enforcement, and proctoring event logging
-- **Automated Evaluation** — Instant grading on exam submission with support for multiple question types
-- **Result Analytics** — Dashboard with score distribution charts, top performers, and proctoring event summaries
-- **Role-Based Access** — Admin, Instructor, Student, and Proctor roles with tailored dashboards
+### Examination workflow
 
-## Project Structure
+- Create reusable question banks and add MCQ, true/false, and short-answer questions
+- Create exams from a question bank with configurable duration, total marks, and passing marks
+- Validate exam configuration and prevent publishing exams without questions
+- Publish exams for students and resume in-progress attempts
+- Autosave answers while the student moves through the exam
+- Enforce server-side exam timing and prevent duplicate submissions
+- Automatically grade answers and scale the raw question score to the exam's configured total marks
+- Count unanswered questions as incorrect during grading
 
+### Proctoring
+
+- Capture the student's webcam with `getUserMedia`
+- Stream video peer-to-peer with WebRTC
+- Use Socket.io as the WebRTC signaling channel
+- Log tab switches and fullscreen exits as proctoring events
+- Show active exam sessions to authorized proctors
+
+### Authentication and security
+
+- Student self-registration
+- BCrypt password hashing
+- Short-lived JWT access tokens
+- Rotating, server-stored refresh tokens
+- Role-based API authorization
+- Authentication endpoint rate limiting
+- Profile and password management
+- CORS allowlist configured through `CLIENT_URL`
+
+### Reporting
+
+- Student result history and aggregate performance
+- Exam completion, average score, and pass/fail metrics
+- Score-distribution charts
+- Top-performer tables
+- Proctoring-event summaries
+
+## Tech Stack
+
+| Area | Technology |
+| --- | --- |
+| Frontend | React 18, TypeScript, Vite, React Router |
+| Styling | Tailwind CSS, Lucide React |
+| Charts | Recharts |
+| API client | Axios |
+| Backend | Node.js, Express, TypeScript |
+| Real-time signaling | Socket.io |
+| Video | Browser WebRTC APIs |
+| Database | PostgreSQL with `pg`; PGlite fallback for zero-config demos |
+| Authentication | JSON Web Tokens, BCrypt, rotating refresh tokens |
+| Deployment | Vercel projects for frontend and REST API |
+
+## Architecture
+
+```text
+React SPA
+  |
+  |-- HTTPS/JSON --> Express REST API --> PostgreSQL or PGlite
+  |
+  |-- Socket.io --> Node signaling server --> WebRTC peer connection
 ```
-├── backend/          # Express API + Socket.io server
-│   ├── src/
-│   │   ├── routes/   # REST API endpoints
-│   │   ├── services/ # Business logic (evaluation)
-│   │   ├── socket/   # WebRTC signaling
-│   │   └── db/       # Schema, seed data
-│   └── package.json
-├── frontend/         # React SPA
-│   ├── src/
-│   │   ├── pages/    # Route pages
-│   │   ├── components/
-│   │   ├── hooks/    # useWebRTC hook
-│   │   └── context/  # Auth context
-│   └── package.json
-└── docker-compose.yml
+
+The backend has two entry points:
+
+- `backend/src/index.ts` starts the full Node HTTP and Socket.io server for local or long-running-host deployments.
+- `backend/api/index.ts` exports the Express application as a Vercel serverless REST function.
+
+The database adapter first tries `DATABASE_URL`. If PostgreSQL is unavailable, it initializes PGlite, creates the schema, and inserts demo data.
+
+## Repository Structure
+
+```text
+.
+|-- backend/
+|   |-- api/index.ts              # Vercel serverless entry point
+|   |-- src/app.ts                # Express REST application
+|   |-- src/index.ts              # Node + Socket.io entry point
+|   |-- src/db/                   # schema, setup, seed, database adapter
+|   |-- src/middleware/           # authentication and rate limiting
+|   |-- src/routes/               # REST resources
+|   |-- src/services/             # grading logic
+|   `-- src/socket/               # WebRTC signaling
+|-- frontend/
+|   |-- public/                   # brand assets
+|   `-- src/
+|       |-- api/                  # Axios client and token refresh
+|       |-- components/           # layout and reusable UI
+|       |-- context/              # auth and toast providers
+|       |-- hooks/                # WebRTC hook
+|       `-- pages/                # role-specific routes
+`-- docker-compose.yml
 ```
 
-## Quick Start
+## Local Setup
 
 ### Prerequisites
 
-- Node.js 18+
-- PostgreSQL 14+ (or Docker)
+- Node.js 20 or newer
+- npm
+- Docker Desktop, or an existing PostgreSQL database
 
 ### 1. Start PostgreSQL
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-### 2. Setup Backend
+PostgreSQL starts on `localhost:5432` with database `exam_proctoring`, user `postgres`, and password `password`.
+
+### 2. Configure and start the backend
 
 ```bash
 cd backend
 cp .env.example .env
 npm install
 npm run db:setup
-npm run db:migrate
 npm run db:seed
 npm run dev
 ```
 
-### 3. Start Frontend
+The API and Socket.io server run at `http://localhost:5000`.
+
+To run without PostgreSQL, set `USE_PGLITE=true` in `backend/.env`. The schema and demo data are initialized automatically.
+
+### 3. Configure and start the frontend
 
 ```bash
 cd frontend
+cp .env.example .env
 npm install
 npm run dev
 ```
 
-Open **http://localhost:5173**
+Open `http://localhost:5173`.
 
-> **Windows note:** If your project folder name contains `&`, use `Set-Location -LiteralPath '...'` in PowerShell before running npm scripts, or rename the folder to avoid path issues.
+### Windows path note
+
+The Windows npm command shim can fail when the absolute project path contains `&`. Rename the parent folder or run the underlying Node binaries directly when that happens:
+
+```powershell
+node node_modules/typescript/bin/tsc -b
+node node_modules/vite/bin/vite.js
+```
+
+## Environment Variables
+
+### Backend
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `PORT` | Local only | HTTP server port; defaults to `5000` |
+| `DATABASE_URL` | Recommended | PostgreSQL connection string |
+| `JWT_SECRET` | Yes | Strong secret used to sign access tokens |
+| `CLIENT_URL` | Yes | Allowed frontend origin; accepts comma-separated origins |
+| `USE_PGLITE` | No | Set to `true` to force the embedded PGlite database |
+
+### Frontend
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `VITE_API_URL` | Production | Full REST base URL, including `/api` |
+| `VITE_SOCKET_URL` | For live proctoring | URL of the long-running Socket.io backend |
 
 ## Demo Accounts
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@invigilo.app | Password123! |
-| Instructor | instructor@invigilo.app | Password123! |
-| Student | student@invigilo.app | Password123! |
-| Proctor | proctor@invigilo.app | Password123! |
+All seeded accounts use password `Password123!`.
 
-## API Endpoints
+| Role | Email |
+| --- | --- |
+| Admin | `admin@invigilo.app` |
+| Instructor | `instructor@invigilo.app` |
+| Student | `student@invigilo.app` |
+| Proctor | `proctor@invigilo.app` |
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register user |
-| POST | `/api/auth/login` | Login |
-| GET | `/api/exams` | List exams |
-| POST | `/api/exams` | Create exam |
-| POST | `/api/sessions/start/:examId` | Start exam session |
-| POST | `/api/sessions/:id/submit` | Submit & auto-evaluate |
-| GET | `/api/analytics/exam/:id` | Exam analytics |
-| POST | `/api/proctoring/events` | Log proctoring event |
+## Main API Routes
 
-## Architecture
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/auth/register` | Register a student |
+| `POST` | `/api/auth/login` | Sign in |
+| `POST` | `/api/auth/refresh` | Rotate refresh and access tokens |
+| `GET` | `/api/auth/me` | Read the current profile |
+| `GET/POST` | `/api/question-banks` | List or create banks |
+| `POST` | `/api/question-banks/:id/questions` | Add a question |
+| `GET/POST` | `/api/exams` | List or create exams |
+| `PATCH` | `/api/exams/:id/publish` | Publish an exam |
+| `POST` | `/api/sessions/start/:examId` | Start or resume an attempt |
+| `POST` | `/api/sessions/:id/answer` | Save an answer |
+| `POST` | `/api/sessions/:id/submit` | Submit and grade an attempt |
+| `GET` | `/api/analytics/exam/:examId` | Read exam analytics |
+| `POST` | `/api/proctoring/events` | Record a proctoring signal |
+| `GET` | `/api/health` | Check API and database health |
 
+## Deployment
+
+The repository is configured as two Vercel projects:
+
+1. Deploy `backend/` as the API project.
+2. Set backend `JWT_SECRET`, `DATABASE_URL`, and `CLIENT_URL`.
+3. Deploy `frontend/` as the SPA project.
+4. Set frontend `VITE_API_URL` to the backend deployment URL plus `/api`.
+
+For a persistent production system, always configure a hosted PostgreSQL `DATABASE_URL`. The PGlite fallback uses ephemeral storage on Vercel and is intended only for demonstrations.
+
+Vercel serverless functions do not provide a persistent Socket.io server. The REST API and browser-based violation logging deploy on Vercel, but live WebRTC proctor video requires running `backend/src/index.ts` on a long-running Node host and setting `VITE_SOCKET_URL` to that host.
+
+## Verification
+
+```bash
+cd backend
+npm run build
+
+cd ../frontend
+npm run build
 ```
-Student Browser                    Proctor Browser
-     │                                  │
-     ├── WebRTC (video stream) ─────────┤
-     │                                  │
-     └── Socket.io ──► Signaling Server ◄── Socket.io
-                           │
-                      PostgreSQL
-```
 
-## Resume Highlights
-
-- Designed and built a full-stack exam platform from scratch with 4 user roles
-- Implemented WebRTC peer-to-peer video streaming with Socket.io signaling for live proctoring
-- Built automated evaluation engine supporting MCQ, True/False, and Short Answer questions
-- Created analytics dashboard with score distribution and proctoring event visualization
-- Secured API with JWT authentication and role-based authorization middleware
+The frontend production build may report a large JavaScript chunk warning because charting, Socket.io, and all role-specific pages are currently bundled together. This warning does not prevent deployment.
 
 ## License
 

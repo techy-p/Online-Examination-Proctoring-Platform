@@ -70,6 +70,32 @@ router.post('/', authenticate, authorize('admin', 'instructor'), async (req, res
       return res.status(400).json({ error: 'Title and question bank are required' });
     }
 
+    const duration = Number(durationMinutes || 60);
+    const total = Number(totalMarks || 100);
+    const passing = Number(passingMarks || 40);
+
+    if (!Number.isFinite(duration) || duration < 1 || !Number.isFinite(total) || total < 1) {
+      return res.status(400).json({ error: 'Duration and total marks must be positive numbers' });
+    }
+    if (!Number.isFinite(passing) || passing < 0 || passing > total) {
+      return res.status(400).json({ error: 'Passing marks must be between 0 and total marks' });
+    }
+
+    const bankResult = await query(
+      `SELECT qb.id, COUNT(q.id) as question_count
+       FROM question_banks qb
+       LEFT JOIN questions q ON q.bank_id = qb.id
+       WHERE qb.id = $1
+       GROUP BY qb.id`,
+      [bankId]
+    );
+    if (bankResult.rows.length === 0) {
+      return res.status(400).json({ error: 'Question bank not found' });
+    }
+    if (Number(bankResult.rows[0].question_count) === 0) {
+      return res.status(400).json({ error: 'Add at least one question to the bank before creating an exam' });
+    }
+
     const result = await query(
       `INSERT INTO exams (title, description, bank_id, created_by, duration_minutes, total_marks,
                           passing_marks, shuffle_questions, proctoring_enabled, start_time, end_time)
@@ -77,7 +103,7 @@ router.post('/', authenticate, authorize('admin', 'instructor'), async (req, res
        RETURNING *`,
       [
         title, description, bankId, req.user!.id,
-        durationMinutes || 60, totalMarks || 100, passingMarks || 40,
+        duration, total, passing,
         shuffleQuestions ?? true, proctoringEnabled ?? true,
         startTime || null, endTime || null,
       ]
@@ -102,12 +128,16 @@ router.post('/', authenticate, authorize('admin', 'instructor'), async (req, res
 router.patch('/:id/publish', authenticate, authorize('admin', 'instructor'), async (req, res) => {
   try {
     const result = await query(
-      `UPDATE exams SET is_published = true, updated_at = NOW() WHERE id = $1 RETURNING *`,
+      `UPDATE exams
+       SET is_published = true, updated_at = NOW()
+       WHERE id = $1
+         AND EXISTS (SELECT 1 FROM exam_questions WHERE exam_id = $1)
+       RETURNING *`,
       [req.params.id]
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Exam not found' });
+      return res.status(400).json({ error: 'Exam not found or has no questions' });
     }
 
     res.json(result.rows[0]);

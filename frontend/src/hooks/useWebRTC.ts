@@ -66,18 +66,30 @@ export function useWebRTC({ sessionId, isInitiator, enabled }: UseWebRTCOptions)
   useEffect(() => {
     if (!enabled || !sessionId) return;
 
+    const socketUrl = import.meta.env.VITE_SOCKET_URL;
+    if (!socketUrl) {
+      if (isInitiator) {
+        startLocalStream().catch(() => {});
+      }
+      return () => {
+        localStreamRef.current?.getTracks().forEach((track) => track.stop());
+      };
+    }
+
     const token = getAccessToken();
-    const socket = io(import.meta.env.VITE_SOCKET_URL || window.location.origin, {
+    const socket = io(socketUrl, {
       auth: { token },
     });
     socketRef.current = socket;
 
     const init = async () => {
-      await startLocalStream();
+      if (isInitiator) {
+        await startLocalStream();
+      }
       socket.emit('join-exam-room', { sessionId });
     };
 
-    init();
+    init().catch(() => {});
 
     socket.on('existing-peers', async (peers: string[]) => {
       if (isInitiator && peers.length > 0) {

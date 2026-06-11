@@ -44,7 +44,9 @@ async function initPGlite() {
     return;
   }
 
-  const dataDir = path.join(process.cwd(), 'data', 'pglite');
+  const dataDir = process.env.VERCEL
+    ? path.join('/tmp', 'invigilo-pglite')
+    : path.join(process.cwd(), 'data', 'pglite');
   fs.mkdirSync(dataDir, { recursive: true });
   pglite = new PGlite(dataDir);
   global.__invigiloPglite = pglite;
@@ -56,7 +58,13 @@ async function initPGlite() {
   const hasUsers = tableCheck.rows[0]?.exists;
 
   if (!hasUsers) {
-    const schemaPath = path.join(__dirname, 'schema.sql');
+    const schemaPath = [
+      path.join(__dirname, 'schema.sql'),
+      path.join(process.cwd(), 'src', 'db', 'schema.sql'),
+    ].find((candidate) => fs.existsSync(candidate));
+    if (!schemaPath) {
+      throw new Error('Database schema file could not be found');
+    }
     const schema = fs.readFileSync(schemaPath, 'utf-8')
       .replace(/CREATE EXTENSION IF NOT EXISTS "uuid-ossp";\s*/i, '')
       .replace(/uuid_generate_v4\(\)/g, 'gen_random_uuid()');
